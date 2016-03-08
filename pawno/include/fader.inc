@@ -98,7 +98,7 @@ public 	OnTextDrawFadeUpdate(Text:text, color, boxcolor, updaterate, displaytime
 			if (gFadeAlpha[text] >= 255)
 			{
 				KillTimer(gFadeTimer[text]);
-				gFadeTimer[text] = SetTimerEx("OnTextDrawFadeUpdate", displaytime, true, "iiiiiii", _:text, color, updaterate, displaytime, 1, forplayerid);
+				gFadeTimer[text] = SetTimerEx("OnTextDrawFadeUpdate", displaytime, true, "iiiiiii", _:text, color, boxcolor, updaterate, displaytime, 1, forplayerid);
 			}
 		}
 
@@ -132,9 +132,15 @@ public 	OnTextDrawFadeUpdate(Text:text, color, boxcolor, updaterate, displaytime
 			}
 		}
 	}
+	return 1;
 }
 
 forward OnTextDrawFadeComplete(Text:text, forplayerid);
+public OnTextDrawFadeComplete(Text:text, forplayerid)
+{
+	// The callback function must be implemented at least once, otherwise CallRemoteFunction makes the server act crazy...
+	return 1;
+}
 
 #if ! defined MAX_PLAYER_TEXT_DRAWS
 	#define MAX_PLAYER_TEXT_DRAWS (256)
@@ -191,7 +197,7 @@ public 	OnPlayerTextDrawFadeUpdate(playerid, PlayerText:text, color, boxcolor, u
 			if (pFadeAlpha[playerid][text] >= 255)
 			{
 				KillTimer(pFadeTimer[playerid][text]);
-				pFadeTimer[playerid][text] = SetTimerEx("OnPlayerTextDrawFadeUpdate", displaytime, true, "iiiiiii", playerid, _:text, color, updaterate, displaytime, 1);
+				pFadeTimer[playerid][text] = SetTimerEx("OnPlayerTextDrawFadeUpdate", displaytime, true, "iiiiiii", playerid, _:text, color, boxcolor, updaterate, displaytime, 1);
 			}
 		}
 
@@ -222,8 +228,14 @@ public 	OnPlayerTextDrawFadeUpdate(playerid, PlayerText:text, color, boxcolor, u
 			}
 		}
 	}
+	return 1;
 }
 
 forward OnPlayerTextDrawFadeComplete(playerid, PlayerText:text);
+public OnPlayerTextDrawFadeComplete(playerid, PlayerText:text)
+{
+	// The callback function must be implemented at least once, otherwise CallRemoteFunction makes the server act crazy...
+	return 1;
+}
 
 #undef ALPHA
