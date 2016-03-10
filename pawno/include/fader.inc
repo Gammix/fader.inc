@@ -42,9 +42,9 @@ stock TextDrawFadeForPlayer(playerid, Text:text, color = 0, boxcolor = 0, update
 	gFadeAlpha[text] = 0;
 
 	KillTimer(gFadeTimer[text]);
-	gFadeTimer[text] = SetTimerEx("OnTextDrawFadeUpdate", updaterate, true, "iiiiiiii", _:text, color, boxcolor, updaterate, displaytime, 0, playerid);
+	gFadeTimer[text] = SetTimerEx("OnTextDrawFadeUpdate", updaterate, true, "iiiiiii", _:text, color, boxcolor, updaterate, displaytime, 0, playerid);
 
-	return true;
+	return -1;
 }
 
 stock TextDrawFadeForAll(Text:text, color = 0, boxcolor = 0, updaterate = 30, displaytime = 1500)
@@ -70,15 +70,15 @@ stock TextDrawFadeForAll(Text:text, color = 0, boxcolor = 0, updaterate = 30, di
 	gFadeAlpha[text] = 0;
 
 	KillTimer(gFadeTimer[text]);
-	gFadeTimer[text] = SetTimerEx("OnTextDrawFadeUpdate", updaterate, true, "iiiiiiii", _:text, color, boxcolor, updaterate, displaytime, 0, INVALID_PLAYER_ID);
+	gFadeTimer[text] = SetTimerEx("OnTextDrawFadeUpdate", updaterate, true, "iiiiiii", _:text, color, boxcolor, updaterate, displaytime, 0, INVALID_PLAYER_ID);
 
-	return true;
+	return -1;
 }
 
 forward OnTextDrawFadeUpdate(Text:text, color, boxcolor, updaterate, displaytime, type, forplayerid);
 public 	OnTextDrawFadeUpdate(Text:text, color, boxcolor, updaterate, displaytime, type, forplayerid)
 {
-	switch (type)
+	switch(type)
 	{
 	    case 0:
 		{
@@ -128,13 +128,17 @@ public 	OnTextDrawFadeUpdate(Text:text, color, boxcolor, updaterate, displaytime
 				else
 					TextDrawHideForAll(text);
 
-				CallRemoteFunction("OnTextDrawFadeComplete", "ii", _:text, forplayerid);
+				#if defined OnTextDrawFadeComplete
+					OnTextDrawFadeComplete(text, forplayerid);
+				#endif
 			}
 		}
 	}
 }
 
-forward OnTextDrawFadeComplete(Text:text, forplayerid);
+#if defined OnTextDrawFadeComplete
+	forward OnTextDrawFadeComplete(Text:text, forplayerid);
+#endif
 
 #if ! defined MAX_PLAYER_TEXT_DRAWS
 	#define MAX_PLAYER_TEXT_DRAWS (256)
@@ -166,15 +170,15 @@ stock PlayerTextDrawFade(playerid, PlayerText:text, color = 0, boxcolor = 0, upd
 	pFadeAlpha[playerid][text] = 0;
 
 	KillTimer(pFadeTimer[playerid][text]);
-	pFadeTimer[playerid][text] = SetTimerEx("OnPlayerTextDrawFadeUpdate", updaterate, true, "iiiiiiii", playerid, _:text, color, boxcolor, updaterate, displaytime, 0);
+	pFadeTimer[playerid][text] = SetTimerEx("OnPlayerTextDrawFadeUpdate", updaterate, true, "iiiiiii", playerid, _:text, color, boxcolor, updaterate, displaytime, 0);
 
-	return true;
+	return -1;
 }
 
 forward OnPlayerTextDrawFadeUpdate(playerid, PlayerText:text, color, boxcolor, updaterate, displaytime, type);
 public 	OnPlayerTextDrawFadeUpdate(playerid, PlayerText:text, color, boxcolor, updaterate, displaytime, type)
 {
-	switch (type)
+	switch(type)
 	{
 	    case 0:
 		{
@@ -191,7 +195,7 @@ public 	OnPlayerTextDrawFadeUpdate(playerid, PlayerText:text, color, boxcolor, u
 			if (pFadeAlpha[playerid][text] >= 255)
 			{
 				KillTimer(pFadeTimer[playerid][text]);
-				pFadeTimer[playerid][text] = SetTimerEx("OnPlayerTextDrawFadeUpdate", displaytime, true, "iiiiiii", playerid, _:text, color, updaterate, displaytime, 1);
+				pFadeTimer[playerid][text] = SetTimerEx("OnPlayerTextDrawFadeUpdate", displaytime, true, "iiiiiii", playerid, _:text, color, boxcolor, updaterate, displaytime, 1);
 			}
 		}
 
@@ -218,12 +222,14 @@ public 	OnPlayerTextDrawFadeUpdate(playerid, PlayerText:text, color, boxcolor, u
 
 				PlayerTextDrawHide(playerid, text);
 
-				CallRemoteFunction("OnPlayerTextDrawFadeComplete", "ii", playerid, _:text);
+				#if defined OnPlayerTextDrawFadeComplete
+					OnPlayerTextDrawFadeComplete(playerid, text);
+				#endif
 			}
 		}
 	}
 }
 
-forward OnPlayerTextDrawFadeComplete(playerid, PlayerText:text);
-
-#undef ALPHA
+#if defined OnPlayerTextDrawFadeComplete
+	forward OnPlayerTextDrawFadeComplete(playerid, PlayerText:text);
+#endif
