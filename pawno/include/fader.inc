@@ -98,7 +98,7 @@ public 	OnTextDrawFadeUpdate(Text:text, color, boxcolor, updaterate, displaytime
 			if (gFadeAlpha[text] >= 255)
 			{
 				KillTimer(gFadeTimer[text]);
-				gFadeTimer[text] = SetTimerEx("OnTextDrawFadeUpdate", displaytime, true, "iiiiiii", _:text, color, updaterate, displaytime, 1, forplayerid);
+				gFadeTimer[text] = SetTimerEx("OnTextDrawFadeUpdate", displaytime, true, "iiiiiii", _:text, color, boxcolor, updaterate, displaytime, 1, forplayerid);
 			}
 		}
 
